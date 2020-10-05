@@ -42,8 +42,6 @@
         };
 
         // All of the "map" functions must be within the scope of this one.
-        // This allows us to not have the token visible in this html file.
-        // It has to be in kdtree.py though.
         function myMapbox(token) {
             mapboxgl.accessToken = token;
                 var map = new mapboxgl.Map({
@@ -94,7 +92,7 @@
 
             // Add the points as a separate layer to our map.
             map.addLayer({
-                'id': 'marker',
+                'id': 'neighbors',
                 'type': 'symbol',
                 'source': 'neighbors',
                 'layout': {
@@ -106,7 +104,35 @@
 
             $.getJSON("http://localhost:8080/click/?lngLat=" + e.lngLat.toArray())
 
-            })
+            });
+
+            // Create a popup for markers.
+            var popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+
+            // When we hover over a neighbor (its marker), the name of 
+            // the city at those coordinates will be shown.
+            map.on('mouseenter', 'neighbors', function(e){
+
+                // change the cursor to be a finger pointer
+                map.getCanvas().style.cursor = 'pointer';
+                
+                // Get the name and location of the place
+                var coordinates = e.features[0].geometry.coordinates.slice(); 
+                var name = e.features[0].properties.name;
+
+                // Put the name into the popup's information box
+                popup.setLngLat(coordinates).setHTML(name).addTo(map);
+            });
+
+            // When the mouse pointer leaves the marker, this function will
+            // get rid of the information on screen.
+            map.on('mouseleave', 'neighbors', function () {
+                map.getCanvas().style.cursor = '';
+                popup.remove();
+            });
         }
     </script>
 
