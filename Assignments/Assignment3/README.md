@@ -13,7 +13,7 @@ in the world. Either one may be used in this program by changing the path name t
 |  2 |mapbox.html            | Template that Flask will use to create the webpage. Front end code.                            |
 |  3 |UScities.geojson       | Orignal geojson data file of major cities. Has unnecessary info.                               |
 |  4 |citieslonlat.geojson   | Modified data file. Only contains longitude and latitude of major US cities.                   |
-|  5 |cityfilter.py          | File that I used to filter UScities.geojson into citieslonlat.geojson                          |
+|  5 |cityfilter.py          | File that I used to filter cities.json into worldcities.geojson                                |
 |  6 | cities.json (not mine)|https://github.com/lutangar/cities.json/blob/master/cities.json Original world cities data file.|
 |  7 |worldcities.geojson    | This was too big to put on github. You can run cityfilter.py on cities.json to make it, though.|  
 
