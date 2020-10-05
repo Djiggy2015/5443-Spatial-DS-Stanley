@@ -15,7 +15,7 @@ CORS(app)
 geojcoords = [] # Used to hold our geojson neighbors
 
 def getdata():
-    path = 'citieslonlat.geojson'
+    path = 'worldcities.geojson'
     if os.path.isfile(path):
         with open(path, 'r') as f:
             data = f.read()
@@ -43,14 +43,14 @@ def index():
 # Will return the token to the front end. 
 @app.route("/token")
 def token():
-    token = ''
+    token = 'hidden'
     return token
 
 # When the user click on page.
 @app.route("/click/")
 def click():
     global geojcoords
-    clickedcoords = []
+    clickedcoords = [] # Holds coordinates where user clicked on map.
 
     # Used to get the coordinates of where the user clicked from 
     # the front end.
@@ -81,6 +81,7 @@ def click():
 @app.route("/neighbors")
 def neighbors():
     global geojcoords
+    
     # The front end complains when a list is sent, so I convert 
     # the list of geojson features into a dictionary.
     return dict(geojcoords)
