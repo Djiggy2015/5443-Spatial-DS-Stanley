@@ -43,7 +43,7 @@ def index():
 # Will return the token to the front end. 
 @app.route("/token")
 def token():
-    token = 'pk.eyJ1IjoiZGppZ2d5MjAxNSIsImEiOiJja2Z0bW80dmowbzI5MnpzMzI4N2Z0MWZ2In0.Cf21PjpcVqK9tRheXXrJTQ'
+    token = ''
     return token
 
 # When the user click on page.
