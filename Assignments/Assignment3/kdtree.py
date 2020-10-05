@@ -13,6 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 geojcoords = [] # Used to hold our geojson neighbors
+citynames = []
 
 def getdata():
     path = 'worldcities.geojson'
@@ -34,6 +35,14 @@ def maketree(data):
 
     return mytree, treecoordinates
 
+# This function will get the name of every city from the 
+# properties section of a feature.
+def getcitynames(data):
+    citynames = []
+    for feature in data["features"]:
+        citynames.append(feature["properties"]["name"])
+
+    return citynames
 # This page will display the map.
 @app.route("/")
 def index():
@@ -43,7 +52,7 @@ def index():
 # Will return the token to the front end. 
 @app.route("/token")
 def token():
-    token = 'hidden'
+    token = 'pk.eyJ1IjoiZGppZ2d5MjAxNSIsImEiOiJja2Z0bW80dmowbzI5MnpzMzI4N2Z0MWZ2In0.Cf21PjpcVqK9tRheXXrJTQ'
     return token
 
 # When the user click on page.
@@ -69,13 +78,13 @@ def click():
         # Neighbors is basically where in our coordinates list the 
         # neighbor is. So we can use our orignal list of coordinates.
         point = geojson.Point(treecoordinates[n]) # Make a point based off coordinates.
-        geojcoords.append(geojson.Feature(geometry=point,properties={'name':'city'}))
+        geojcoords.append(geojson.Feature(geometry=point,properties={'name':citynames[n]}))
 
     # Store the geojson coordinates into our geojcoords list
     geojcoords = geojson.FeatureCollection(geojcoords) 
 
 
-    return 
+    return "User clicked!"
 
 # Make the geojson object created from clicking available for the front end.
 @app.route("/neighbors")
@@ -89,4 +98,5 @@ def neighbors():
 if __name__ == '__main__':
     data = getdata()
     mytree, treecoordinates = maketree(data)
+    citynames = getcitynames(data)
     app.run(debug=True, port=8080)
