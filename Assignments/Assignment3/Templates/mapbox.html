@@ -33,33 +33,55 @@
     <!-- Javascript code to load map -->
     <script>
 
-        /*window.onload = (event) => {
+        // This is called as soon as the web page loads up.
+        window.onload = (event) => {
            $.get("http://localhost:8080/token", function (data) {
                 console.log(data);
                 myMapbox(data)
            });
         };
 
+        // All of the "map" functions must be within the scope of this one.
+        // This allows us to not have the token visible in this html file.
+        // It has to be in kdtree.py though.
         function myMapbox(token) {
             mapboxgl.accessToken = token;
-            var map = new mapboxgl.Map({
+                var map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/outdoors-v11',
                 center: [-98.5, 33.912],
                 zoom: 10
         });
-        */
 
-        //};  
+        // Taken directly from Mapbox example. Shows the counties
+        // In the united states.
+        map.on('load', function () {
 
-        // Initial setup for Mapbox
-        mapboxgl.accessToken = '';
-        var map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
-        center: [-98.50514300685616, 33.91241985268104], // starting position [lng, lat] (Wichita Falls)
-        zoom: 15 // starting zoom
+        // Add the source to query. In this example we're using
+        // county polygons uploaded as vector tiles
+        map.addSource('counties', {
+        'type': 'vector',
+        'url': 'mapbox://mapbox.82pkq93d'
         });
+
+        // I pretty much stole this from Mapbox. This adds a layer to
+        // the United States that shows all the different counties.
+        map.addLayer(
+        {
+        'id': 'counties',
+        'type': 'fill',
+        'source': 'counties',
+        'source-layer': 'original',
+        'paint': {
+        'fill-outline-color': 'rgba(0,0,0,0.1)',
+        'fill-color': 'rgba(0,0,0,0.1)'
+        }
+        },
+        'settlement-label'
+        ); // Place polygon under these labels.
+
+        });
+
 
             // Event listener for when the user clicks on the map.
             map.on('click', function(e){
@@ -85,7 +107,7 @@
             $.getJSON("http://localhost:8080/click/?lngLat=" + e.lngLat.toArray())
 
             })
-      
+        }
     </script>
 
 
