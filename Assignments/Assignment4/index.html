@@ -227,13 +227,25 @@
                     <li>
                         <!-- Search Button -->
                         <a class="clickable" data-toggle="modal" data-target="#searchModal"
-                            title="Search Layer Attributes"><i class="fa fa-fw fa-search"></i></a>
+                            title="Search Address & Coords."><i class="fas fa-binoculars"></i></a>
+                    </li>
+
+                    <li>
+                        <!-- Make file Button -->
+                        <a class="clickable" , data-toggle="modal" data-target="#SaveModal"
+                            title="Save data into a geojson file"><i class="fas fa-save"></i></a>
+                    </li>
+
+                    <li>
+                        <!--Upload data button-->
+                        <a class="clickable" , data-toggle="modal" data-target="#UploadModal"
+                        title="Upload geojson file"><i class="fas fa-upload"></i></a>
                     </li>
 
                     <li>
                         <!-- Bbox Button -->
                         <a class="clickable" data-toggle="modal" data-target="#BoundingModal"
-                            title="Display Bounding Box"><i class="far fa-square"></i></a>
+                            title="Display Bounding Box"><i class="fas fa-vector-square"></i></a>
                     </li>
 
                     <li>
@@ -241,6 +253,7 @@
                         <a class="clickable" data-toggle="modal" data-target="#CityModal" title="Find city"><i
                                 class="fas fa-city"></i></a>
                     </li>
+
 
                     <li>
                         <!-- Print Map Button -->
@@ -449,6 +462,124 @@
             </div>
         </div>
 
+        <!-- Make Json Modal -->
+        <!-- Make Json Modal -->
+        <!-- Make Json Modal -->
+        <div class="modal left fade" id="SaveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-save"></i>&nbsp;Save points.
+                        </h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br />Step 1. Use the
+                            search
+                            modal to find some points, or just add them yourself.</p>
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br />Step 2. The points
+                            will
+                            be here. Press the save icon to make a Json file from them.</p>
+
+                        <div style="display: inline-flex;" id="target_layer">
+                            <textarea id="geocoords"></textarea>
+                            <button class="clickable" type="submit" id="save_info"><i class="fas fa-save"></i></button>
+                            <button class="clickable" type="submit" id="delete_info"><i
+                                    class="fas fa-trash"></i></button>
+                        </div>
+
+                        <script>
+                            $("#save_info").click(function event(){
+
+                                var dict = {coordinates: "data"}
+
+                                dict[coordinates] = $("#geocoords").html();
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: "http://127.0.0.1:8080/geodata", 
+                                    data: JSON.stringify(dict),
+                                    crossDomain: true,
+                                    contentType: "application/json"
+                                })
+                            });
+
+                            $("#delete_info").click(function event(){
+                                $("#geocoords").val("");
+
+                            })
+
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload data Modal -->
+        <!-- Upload data Modal -->
+        <!-- Upload data Modal -->
+        <div class="modal left fade" id="UploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-upload"></i>&nbsp;Show points.
+                        </h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br />Step 1. Paste some geojson
+                        data into the textbox below. Press search to show it on the map.</p>
+
+                        <div style="display: inline-flex;" id="target_layer">
+                            <textarea id="geojsondata"></textarea>
+                            <button class="clickable" type="submit" id="uploadData"><i class="fas fa-search"></i></button>
+                            <button class="clickable" type="submit" id="deleteData"><i
+                                    class="fas fa-trash"></i></button>
+                        </div>
+
+                        <script>
+                            $("#uploadData").click(function (event){
+
+                                let userdata = $("#geojsondata").val()
+                                console.log(userdata)
+                                userdata = JSON.parse(userdata)
+
+                                let name = 'textdata' + 1;
+
+                                map.addSource(name, {
+                                    type: 'geojson',
+                                    data: userdata
+                                });
+
+                                map.addLayer({
+                                    id: name,
+                                    type: 'circle',
+                                    source: name,
+                                    paint: {
+                                        "circle-color": "blue",
+                                        "circle-radius": 5,
+                                    }
+                                });
+
+                            });
+
+                            $("#deleteData").click(function (event){
+                                $("#geojsondata").val("")
+                            })
+
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- City Modal -->
         <!-- City Modal -->
         <!-- City Modal -->
@@ -793,6 +924,429 @@
             </div>
         </div>
 
+        <!-- Neighbors Modal-->
+        <!-- Neighbors Modal-->
+        <!-- Neighbors Modal-->
+        <div class="modal left fade" id="NeighborsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-users"></i>&nbsp;Show Closest
+                            Neighbors.
+                        </h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Click on the map to select 
+                            a pair of coordiantes.</p>
+                        <br />
+
+                        <pre id="clickedCoords" ></pre>
+                        <br />
+                        
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Select the number of volcanos 
+                            you wish to find.</p>
+
+                        <input type="search" id="neighbornum" />
+                        <br />
+
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> When the above data is correct,
+                            press the button below.</p>
+
+                        <button class="clickable" type="submit" id="findNeighbors"><i class="fa fa-search"></i></button>
+
+                        <script>
+
+                            $("#findNeighbors").click(function (event) {
+                                let coords = $("#clickedCoords").html()
+
+                                coords = coords.split(',');
+
+                                let lon = parseFloat(coords[0]);
+                                let lat = parseFloat(coords[1]);
+
+                                console.log(lon)
+                                console.log(lat)
+
+                                let number = $("#neighbornum").val()
+                                console.log(number)
+
+                                $.get("http://localhost:8080/neighbors?lon=" + lon + "&lat=" + lat + "&num=" + number, function(data){
+                                    let features = data['results'][0]['features'];
+
+                                    for(i=0;i<number;i++)
+                                    {
+                                        let coords = (features[i].geometry.coordinates)
+
+                                        var marker = new mapboxgl.Marker({'color':"#FFFF00"})
+                                        .setLngLat(coords)
+                                        .addTo(map);
+                                    }
+                                })
+                            });
+                        </script>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bbox Modal -->
+        <!-- Bbox Modal -->
+        <!-- Bbox Modal -->
+        <div class="modal left fade" id="BoundingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-vector-square"></i>&nbsp;Display
+                            Bounding
+                            Box</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <p>Click on the button below, then click some points on the map.</p>
+                        <button class="clickable" type="submit" id="Draw-shape"><i
+                                class="fas fa-map-marker"></i></button>
+
+                        <br />
+
+                        <p>Click this stop button when you have entered your points.</p>
+                        <button class="clickable" type="submit" id="StopDraw"><i class="fas fa-square"></i></button>
+                        <br />
+
+                        <p>After hitting the stop button, click this button to make your box.</p>
+                        <button class="clickable" type="submit" id="Make-shape"><i
+                                class="fas fa-vector-square"></i></button>
+                        <br />
+
+                        <p>This button will show all the cities within your box.</p>
+                        <button class="clickable" type="submit" id="ShowPoints"><i class="fas fa-city"></i></button>
+
+
+                        <script>
+
+                            var points = [];
+                            var done = false;
+                            //var markernum = 0;
+
+                            // Lets the user click on the map and add their points.
+                            $("#Draw-shape").click(function (event) {
+
+                                map.on('click', function (e) {
+                                    if (done == false) {
+                                        let coords = e.lngLat;
+
+                                        points.push(coords);
+
+                                        console.log(points);
+
+                                        var marker = new mapboxgl.Marker()
+                                            .setLngLat(coords)
+                                            .addTo(map);
+
+                                    }
+                                });
+
+                            });
+
+                            // Used to make sure we don't add anymore of the user's points
+                            // to the map.
+                            $("#StopDraw").click(function (event) {
+                                done = true;
+                            });
+
+                            // Will let the user create their bounding box.
+                            $("#Make-shape").click(function (event) {
+                                console.log(points.length);
+
+                                for (i = 0; i < points.length - 1; i++) {
+                                    let lng1 = points[i].lng;
+                                    let lat1 = points[i].lat;
+                                    let lng2 = points[i+1].lng;
+                                    let lat2 = points[i+1].lat;
+                                    let positions = [[lng1, lat1],[lng2, lat2]];
+
+                                    console.log(positions);
+                                    
+                                    var linestring = turf.lineString(positions);
+
+                                    name = "path" + i;
+
+                                        map.addLayer({
+                                            'id': name,
+                                            'type': 'line',
+                                            'source': {
+                                                'type': "geojson",
+                                                "data": linestring
+                                            },
+                                            'layout': {
+                                                'line-join': 'round',
+                                                'line-cap': 'round'
+                                            },
+                                            'paint': {
+                                                'line-color': '#FF0',
+                                                'line-width': 6
+                                            }
+                                        });
+                                };
+
+                                // Make the last line
+                                let last = points.length - 1;
+
+                                    let lng1 = points[last].lng;
+                                    let lat1 = points[last].lat;
+                                    let lng2 = points[0].lng;
+                                    let lat2 = points[0].lat;
+                                    let positions = [[lng1, lat1],[lng2, lat2]];
+
+                                    console.log(positions);
+                                    
+                                    var linestring = turf.lineString(positions);
+
+                                    name = "lastpath";
+
+                                    map.addLayer({
+                                            'id': name,
+                                            'type': 'line',
+                                            'source': {
+                                                'type': "geojson",
+                                                "data": linestring
+                                            },
+                                            'layout': {
+                                                'line-join': 'round',
+                                                'line-cap': 'round'
+                                            },
+                                            'paint': {
+                                                'line-color': '#FF0',
+                                                'line-width': 6
+                                            }
+                                        });
+                            });
+
+                            $("#ShowPoints").click(function (event) {
+
+                                // First find the max and min lats and longs
+                                // Get the max lats and lons
+                                let lonmax = points[0].lng;
+                                let latmax = points[0].lng;
+                                for(i=1; i<points.length; i++)
+                                {
+                                    if(points[i].lng > lonmax)
+                                    {
+                                        lonmax = points[i].lng
+                                    }
+
+                                    if(points[i].lat > latmax)
+                                    {
+                                        latmax = points[i].lat
+                                    }
+                                }
+
+                                // Get the min lats and lons
+                                let lonmin = points[0].lng;
+                                let latmin = points[0].lat;
+                                for(i=1; i<points.length; i++)
+                                {
+                                    if(points[i].lng < lonmin)
+                                    {
+                                        lonmin = points[i].lng;
+                                    }
+                                    
+                                    if(points[i].lat < latmin)
+                                    {
+                                        latmin = points[i].lat;
+                                    }
+                                }
+
+                                console.log(lonmin)
+                                console.log(lonmax)
+                                console.log(latmin)
+                                console.log(latmax)
+
+                                $.get("http://localhost:8080/cities", function (data){
+                                    cities = data["results"][0]['features']
+
+                                    // Loop through every city
+                                    for(i=0; i<cities.length; i++)
+                                    {
+                                        
+                                        citylon = parseFloat((cities[i].geometry.coordinates[0]))
+                                        citylat = parseFloat((cities[i].geometry.coordinates[1]))
+                                        console.log(citylon)
+                                        if((citylon > lonmin && citylon < lonmax) && (citylat > latmin && citylat < latmax))
+                                        {
+                                            coords = [citylon, citylat]
+                                            var marker = new mapboxgl.Marker({"color": "#FF4500"})
+                                            .setLngLat(coords)
+                                            .addTo(map);  
+                                        }
+                                    }
+
+
+                                })
+                            })
+
+
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Modal -->
+        <!-- Location Modal -->
+        <!-- Location Modal -->
+        <div class="modal left fade" id="geolocationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"><i
+                                class="fas fa-fw fa-map-marker-alt"></i>&nbsp;Location
+                            Tools</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <hr>
+                        <br />
+
+                        <!-- enter lng/lat -->
+                        <div style="vertical-align:top;">
+                            <p style="font-size: 12px"><i class="fas fa-map-marked-alt"></i> Enter Coordinates</p>
+                            <input type="number" id='lngInput' style="font-size: 11px; padding: 2px; margin:2px"
+                                placeholder="longitude"><br>
+                            <input type="number" id='latInput' style="font-size: 11px; padding: 2px; margin:2px"
+                                placeholder="latitude"><br>
+
+                            <div style="padding-top:10px">
+                                <input type="button" value="find" id="findLLButton" style="font-size: 10px;">
+                                <input type="button" value="clear" id="findLLButtonClear" style="font-size: 10px;">
+                            </div>
+                        </div>
+
+                        <br />
+                        <hr>
+                        <br />
+
+                        <!-- lng/lat on map click -->
+                        <p style="font-size: 12px"><i class="fas fa-mouse-pointer"></i> Click on map to find lng/lat:
+                        </p>
+                        <pre id='info'><i class="fa fa-fw fa-globe"></i> lng/lat</pre>
+
+                        <br />
+                        <hr>
+                        <br />
+
+                        <!-- address geocode api-->
+                        <p style="font-size: 12px"><i class="fas fa-home"></i> Address Search:</p>
+                        <div id="addressAppend"></div>
+
+                        <br />
+                        <hr>
+                        <br />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Print Modal -->
+        <!-- Print Modal -->
+        <!-- Print Modal -->
+        <div id="map-print-modal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><i class="fa fa-fw fa-print"></i>&nbsp;Print Map</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <!-- print form -->
+                        <form class="form-horizontal container-fluid" id="print-form">
+                            <div class="row">
+
+                                <!-- title -->
+                                <div class="col">
+                                    <div class="form-group col-sm-12">
+                                        <label>Map Title:</label>
+                                        <input id="export-title" name="export-title" type="text"
+                                            style="font-size: smaller" placeholder="Title..."
+                                            class="form-control input-md" maxlength="90">
+                                    </div>
+                                </div>
+
+                                <!-- output format -->
+                                <div class="radio-groups format form-group col-sm-12">
+
+                                    <div>
+                                        <label>Format: </label>
+                                        <label class="radio-inline" for="output-format-0">
+                                            <input type="radio" name="output-format" id="output-format-0" value="png">
+                                            PNG
+                                        </label>
+                                        <label class="radio-inline" for="output-format-1">
+                                            <input type="radio" name="output-format" id="output-format-1" value="pdf"
+                                                checked="checked">
+                                            PDF
+                                        </label>
+
+                                    </div>
+                                </div>
+                                <!-- format/dimensions -->
+                                <div class="radio-groups size form-group col-sm-12">
+
+                                    <div>
+                                        <label>Dimensions: </label>
+                                        <label class="radio-inline" for="dimensions-0">
+                                            <input type="radio" name="dimensions" id="dimensions-0" value="default"
+                                                checked="checked">
+                                            8.5 x 11
+                                        </label>
+                                        <label class="radio-inline" for="dimensions-1">
+                                            <input type="radio" name="dimensions" id="dimensions-1" value="large">
+                                            11 x 17 (legend)
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <button type="button" id="export-map" class="button button" data-dismiss="modal"><i
+                                            class="fa fa-fw fa-print"></i> Create Map</button>
+                                    <div style="padding-top: 13px; font-size:xx-small; margin:0"><i
+                                            style="color:#dc4f4f" class="fa fa-fw fa-exclamation-circle"></i> This may
+                                        take a few seconds...</div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
         <!-- Railroad Modal-->
         <!-- Railroad Modal-->
         <!-- Railroad Modal-->
@@ -894,351 +1448,37 @@
             </div>
         </div>
 
-        <!-- Bbox Modal -->
-        <!-- Bbox Modal -->
-        <!-- Bbox Modal -->
-        <div class="modal left fade" id="BoundingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
+
+        <!-- Disclaimer Modal -->
+        <!-- Disclaimer Modal -->
+        <!-- Disclaimer Modal -->
+        <div id="disclaimerModal" class="modal" role="dialog">
+            <div class="modal-dialog">
+
                 <div class="modal-content">
-
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel"><i class="far fa-square"></i>&nbsp;Display Bounding
-                            Box</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><i class="fa fa-fw fa-gavel"></i>&nbsp;Disclaimer</h4>
                     </div>
-
                     <div class="modal-body">
-
-                        <div style="display: inline-flex;" id="target_layer">
-                            <input type="search" id="pickState" placeholder="State" />
-                            <br />
-                            <button class="clickable" type="submit" id="search_state"><i
-                                    class="fa fa-search"></i></button>
-                            <button class="clickable" type="submit" id="clear_state"><i
-                                    class="fa fa-eraser"></i></button>
-                        </div>
-
-
-                        <select class="state-picker" id="state-select">
-                        </select>
-
-                        <script>
-                            $("#state-select").hide();
-
-                            // Remove the choices when a choice is selected
-                            $("#clear_state").click(function (event) {
-                                $("#pickState").val("");
-                                $("#state-select").html("");
-                                $("#state-select").hide();
-                            });
-
-                            $("#pickState").keyup(function (event) {
-                                populateStatesSelect();
-                            });
-
-                            // For when user clicks on a selection
-                            $("#state-select").click(function (event) {
-                                let state = $("#state-select option:selected").text();
-
-                                $("#pickState").val(state)
-
-                                $("#state-select").hide();
-                            });
-
-                            // Adds a bounding box
-                            $("#search_state").click(function (event) {
-                                //addLayer();
-
-                                let state = $("#pickState").val();
-
-                                $.get("http://localhost:8080/states?state=" + state, function (data) {
-                                    console.log(data);
-                                });
-
-                            });
-
-                            function populateStatesSelect() {
-                                let filter = $("#pickState").val();
-
-                                let html = "";
-                                $("#state-select").show();
-                                $.get("http://localhost:8080/states?filter=" + filter, function (data) {
-                                    for (var i = 0; i < data['count']; i++) {
-                                        html += '<option>' + data['results'][i].name + '</option>';
-                                    }
-
-                                    $('#state-select').attr("size", data['count']);
-                                    $('#state-select').html(html);
-
-                                })
-                            }
-
-                            function addLayer() {
-                                map.addSource('maine', {
-                                    'type': 'geojson',
-                                    'data': {
-                                        'type': 'Feature',
-                                        'geometry': {
-                                            'type': 'Polygon',
-                                            'coordinates': [
-                                                [
-                                                    [-67.13734351262877, 45.137451890638886],
-                                                    [-66.96466, 44.8097],
-                                                    [-68.03252, 44.3252],
-                                                    [-69.06, 43.98],
-                                                    [-70.11617, 43.68405],
-                                                    [-70.64573401557249, 43.090083319667144],
-                                                    [-70.75102474636725, 43.08003225358635],
-                                                    [-70.79761105007827, 43.21973948828747],
-                                                    [-70.98176001655037, 43.36789581966826],
-                                                    [-70.94416541205806, 43.46633942318431],
-                                                    [-71.08482, 45.3052400000002],
-                                                    [-70.6600225491012, 45.46022288673396],
-                                                    [-70.30495378282376, 45.914794623389355],
-                                                    [-70.00014034695016, 46.69317088478567],
-                                                    [-69.23708614772835, 47.44777598732787],
-                                                    [-68.90478084987546, 47.184794623394396],
-                                                    [-68.23430497910454, 47.35462921812177],
-                                                    [-67.79035274928509, 47.066248887716995],
-                                                    [-67.79141211614706, 45.702585354182816],
-                                                    [-67.13734351262877, 45.137451890638886]
-                                                ]
-                                            ]
-                                        }
-                                    }
-                                });
-                                map.addLayer({
-                                    'id': 'maine',
-                                    'type': 'fill',
-                                    'source': 'maine',
-                                    'layout': {},
-                                    'paint': {
-                                        'fill-color': '#088',
-                                        'fill-opacity': 0.8
-                                    }
-                                });
-                            }
-                        </script>
-
+                        <p>
+                            A place to put your disclaimer... Surely everyone will read it.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Neighbors Modal-->
-        <!-- Neighbors Modal-->
-        <!-- Neighbors Modal-->
-        <div class="modal left fade" id="#NeighborsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
+        <!-- Load Map Div -->
+        <!-- Load Map Div -->
+        <!-- Load Map Div -->
+        <div id='map'></div>
 
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-users"></i>&nbsp;Show Closest Neighbors.
-                        </h4>
-                    </div>
-
-                    <div class="modal-body">
-
-                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Input some coordinates: (lat lon).
-                            The nearest neighbors will be found.</p>
-                        <br />
-
-                        <div style="display: inline-flex;" id="target_layer">
-                            <input type="search" id="pickState" placeholder="State" />
-                            <br />
-                            <button class="clickable" type="submit" id="search_state"><i
-                                    class="fa fa-search"></i></button>
-                            <button class="clickable" type="submit" id="clear_state"><i
-                                    class="fa fa-eraser"></i></button>
-                        </div>
-    
-                        <script>
-    
-                        </script>
-
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-    <!-- Location Modal -->
-    <!-- Location Modal -->
-    <!-- Location Modal -->
-    <div class="modal left fade" id="geolocationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel"><i class="fas fa-fw fa-map-marker-alt"></i>&nbsp;Location
-                        Tools</h4>
-                </div>
-
-                <div class="modal-body">
-
-                    <hr>
-                    <br />
-
-                    <!-- enter lng/lat -->
-                    <div style="vertical-align:top;">
-                        <p style="font-size: 12px"><i class="fas fa-map-marked-alt"></i> Enter Coordinates</p>
-                        <input type="number" id='lngInput' style="font-size: 11px; padding: 2px; margin:2px"
-                            placeholder="longitude"><br>
-                        <input type="number" id='latInput' style="font-size: 11px; padding: 2px; margin:2px"
-                            placeholder="latitude"><br>
-
-                        <div style="padding-top:10px">
-                            <input type="button" value="find" id="findLLButton" style="font-size: 10px;">
-                            <input type="button" value="clear" id="findLLButtonClear" style="font-size: 10px;">
-                        </div>
-                    </div>
-
-                    <br />
-                    <hr>
-                    <br />
-
-                    <!-- lng/lat on map click -->
-                    <p style="font-size: 12px"><i class="fas fa-mouse-pointer"></i> Click on map to find lng/lat:
-                    </p>
-                    <pre id='info'><i class="fa fa-fw fa-globe"></i> lng/lat</pre>
-
-                    <br />
-                    <hr>
-                    <br />
-
-                    <!-- address geocode api-->
-                    <p style="font-size: 12px"><i class="fas fa-home"></i> Address Search:</p>
-                    <div id="addressAppend"></div>
-
-                    <br />
-                    <hr>
-                    <br />
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-    <!-- Print Modal -->
-    <!-- Print Modal -->
-    <!-- Print Modal -->
-    <div id="map-print-modal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"><i class="fa fa-fw fa-print"></i>&nbsp;Print Map</h4>
-                </div>
-
-                <div class="modal-body">
-
-                    <!-- print form -->
-                    <form class="form-horizontal container-fluid" id="print-form">
-                        <div class="row">
-
-                            <!-- title -->
-                            <div class="col">
-                                <div class="form-group col-sm-12">
-                                    <label>Map Title:</label>
-                                    <input id="export-title" name="export-title" type="text" style="font-size: smaller"
-                                        placeholder="Title..." class="form-control input-md" maxlength="90">
-                                </div>
-                            </div>
-
-                            <!-- output format -->
-                            <div class="radio-groups format form-group col-sm-12">
-
-                                <div>
-                                    <label>Format: </label>
-                                    <label class="radio-inline" for="output-format-0">
-                                        <input type="radio" name="output-format" id="output-format-0" value="png">
-                                        PNG
-                                    </label>
-                                    <label class="radio-inline" for="output-format-1">
-                                        <input type="radio" name="output-format" id="output-format-1" value="pdf"
-                                            checked="checked">
-                                        PDF
-                                    </label>
-
-                                </div>
-                            </div>
-                            <!-- format/dimensions -->
-                            <div class="radio-groups size form-group col-sm-12">
-
-                                <div>
-                                    <label>Dimensions: </label>
-                                    <label class="radio-inline" for="dimensions-0">
-                                        <input type="radio" name="dimensions" id="dimensions-0" value="default"
-                                            checked="checked">
-                                        8.5 x 11
-                                    </label>
-                                    <label class="radio-inline" for="dimensions-1">
-                                        <input type="radio" name="dimensions" id="dimensions-1" value="large">
-                                        11 x 17 (legend)
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div>
-                                <button type="button" id="export-map" class="button button" data-dismiss="modal"><i
-                                        class="fa fa-fw fa-print"></i> Create Map</button>
-                                <div style="padding-top: 13px; font-size:xx-small; margin:0"><i style="color:#dc4f4f"
-                                        class="fa fa-fw fa-exclamation-circle"></i> This may
-                                    take a few seconds...</div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-
-
-    <!-- Disclaimer Modal -->
-    <!-- Disclaimer Modal -->
-    <!-- Disclaimer Modal -->
-    <div id="disclaimerModal" class="modal" role="dialog">
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title"><i class="fa fa-fw fa-gavel"></i>&nbsp;Disclaimer</h4>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        A place to put your disclaimer... Surely everyone will read it.
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Load Map Div -->
-    <!-- Load Map Div -->
-    <!-- Load Map Div -->
-    <div id='map'></div>
-
-    <!-- Load coordinates div (Part of Geolocation Modal)-->
-    <div id='coordinates' class='coordinates'></div>
+        <!-- Load coordinates div (Part of Geolocation Modal)-->
+        <div id='coordinates' class='coordinates'></div>
 
     </div>
 

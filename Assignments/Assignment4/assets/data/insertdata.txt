@@ -1,0 +1,31 @@
+{  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "VolcanoID": 210030,
+        "V_Name": "Olot Volcanic Field",
+        "Country": "Spain",
+        "Region": "Mediterranean and W Asia",
+        "Subregion": "Western Europe",
+        "PEI": 5,
+        "H_active": 0,
+        "VEI_Holoce": "No confirmed eruptions",
+        "hazard": "NULL",
+        "class": "U-NHHR",
+        "risk": "NULL",
+        "field_14": null,
+        "field_15": null,
+        "draw_type": "symbol",
+        "source": "volcano0"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          42.17,
+          2.53
+        ]
+      }
+    }
+    ]
+}

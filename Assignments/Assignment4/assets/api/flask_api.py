@@ -1,19 +1,22 @@
 import os
 import sys
 import json
+import geojson
 
-base_path = "C:\\Users\\Matt\\portofportland"
+
+base_path = "C:\\Users\\Matt\\5443-Spatial-DS-Stanley\\Assignments\\Assignment4"
 print(base_path)
 
 from flask import Flask, url_for
 from flask import request
 from flask import jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask import send_file
+from scipy.spatial import KDTree
 import glob
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 ##############################################
 ##             Data Backend                 ##
@@ -21,26 +24,32 @@ CORS(app)
 
 # Used to work with data backend
 
-stateloc = os.path.join(base_path, 'assets', 'json', 'states.json')
+stateloc = os.path.join(base_path, 'assets', 'data', 'states.json')
 
 with open(stateloc) as f:
     data = f.read()
 STATES = json.loads(data)
 
-cityloc = os.path.join(base_path, 'assets', 'json', 'worldcities.geojson')
+cityloc = os.path.join(base_path, 'assets', 'data', 'worldcities.geojson')
 
 # Load city data
 with open(cityloc) as f:
     data = f.read()
 CITIES = json.loads(data)
 
-railroadloc = os.path.join(base_path, 'assets', 'json', 'us_railroads_with_states.geojson')
+volcanoloc = os.path.join(base_path, 'assets', 'data', 'volcanos.geojson')
+# Load volcano data
+with open(volcanoloc) as f:
+    data = f.read()
+VOLCANOS = json.loads(data)
 
+railroadloc = os.path.join(base_path, 'assets', 'data', 'us_railroads_with_states.geojson')
 # Load railroad data
+'''
 with open(railroadloc) as f:
     data = f.read()
 RAILS = json.loads(data)
-
+'''
 
 #statebbloc = os.path.join(base_path, 'assets', 'json', 'us_state_polygons.geojson')
 
@@ -50,7 +59,18 @@ RAILS = json.loads(data)
 #print(STATES)
 
 
+######################################
+# Creating the kd-tree for neighbors #
+######################################
+def makeTree():
+    coordinates = []
 
+    for feature in VOLCANOS['features']:
+        coordinates.append(feature["geometry"]["coordinates"])
+
+    tree = KDTree(coordinates)
+
+    return tree, coordinates
 
 ###############################################
 #              Flask Routes                   #
@@ -108,6 +128,7 @@ def cities():
 
     return handle_response(results)
 
+'''
 @app.route('/railroads', methods = ["GET"])
 def railroads():
     # Take request off URL
@@ -124,6 +145,44 @@ def railroads():
         results = []
 
     return handle_response(results)
+'''
+@app.route('/geodata', methods = ["GET","POST"])
+def geodata():
+    content = request.get_json()
+    print(content)
+
+    content = str(content)
+
+    f = open("demo.txt", 'a')
+    f.write(content)
+    f.close()
+    
+    return handle_response(content)
+
+@app.route('/neighbors', methods=["GET"])
+def neighbors():
+    global tree
+    global coordinates
+
+    lon = float(request.args.get('lon',None))
+    lat = float(request.args.get('lat',None))
+    num = int(request.args.get('num',None))
+
+    search = [lon,lat]
+
+    distances, neighborslist = tree.query(search, k=num)
+
+    neighbors = []
+
+    for i in neighborslist:
+        point = geojson.Point(coordinates[i])
+        neighbors.append(geojson.Feature(geometry=point))
+    neighbors = geojson.FeatureCollection(neighbors)
+
+    print(neighbors)
+    return handle_response(neighbors)
+
+
 
 ###################################
 ##          Functions             #
@@ -177,4 +236,5 @@ def isFloat(string):
         return False
 
 if __name__ == '__main__':
+    tree, coordinates = makeTree()
     app.run(port = 8080, debug = True)

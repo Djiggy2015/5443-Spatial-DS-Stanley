@@ -166,6 +166,10 @@ map.on('load', function () {
 map.on(touchEvent, function (e) {
     document.getElementById('info').innerHTML =
         JSON.stringify(e.lngLat, function (key, val) { return val.toFixed ? Number(val.toFixed(4)) : val; }).replace('{"lng":', '').replace('"lat":', ' ').replace('}', '')
+        document.getElementById('geocoords').innerHTML +=
+        JSON.stringify(e.lngLat, function (key, val) { return val.toFixed ? Number(val.toFixed(4)) : val; }).replace('{"lng":', '').replace('"lat":', ' ').replace('}', '')
+        document.getElementById('clickedCoords').innerHTML =
+        JSON.stringify(e.lngLat, function (key, val) { return val.toFixed ? Number(val.toFixed(4)) : val; }).replace('{"lng":', '').replace('"lat":', ' ').replace('}', '')
 });
 
 //Layer Tree
