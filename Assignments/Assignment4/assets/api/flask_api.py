@@ -170,16 +170,15 @@ def neighbors():
 
     search = [lon,lat]
 
-    distances, neighborslist = tree.query(search, k=num)
+    distances, neighborsList = tree.query(search, k=num, distance_upper_bound = 200)
 
     neighbors = []
 
-    for i in neighborslist:
+    for i in neighborsList:
         point = geojson.Point(coordinates[i])
         neighbors.append(geojson.Feature(geometry=point))
     neighbors = geojson.FeatureCollection(neighbors)
 
-    print(neighbors)
     return handle_response(neighbors)
 
 

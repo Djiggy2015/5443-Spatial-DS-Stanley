@@ -149,8 +149,17 @@
                 <a style="display: inline-flex" class="navbar-brand"><i class="fa fa-globe"></i>&nbsp;World</a>
             </div>
 
+            <!-- Top coordinates box-->
+           <div class="nav navbar-right top-nav">
+                <textarea name="coordinates" id="topcoords" position: relative  >
+
+                </textarea>
+            </div>
+
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
+
+
 
                 <!-- Bookmarks -->
                 <!-- Bookmarks -->
@@ -207,27 +216,15 @@
                     </li>
 
                     <li>
-                        <!-- Layer Attributes -->
-                        <a class="clickable" data-toggle="modal" data-target="#attributesModal"
-                            title="Layer's Attributes"><i class="fa fa-fw fa-info"></i></a>
+                        <!-- My layers -->
+                        <a class="clickable" data-toggle="modal" data-target="#MylayersModal" title="My Layer List"><i
+                                class="fas fa-layer-group" id="list-load"></i></a>
                     </li>
 
                     <li>
                         <!-- Draw Button -->
                         <a class="clickable" data-toggle="modal" data-target="#drawModal" title="Draw & Measure"><i
                                 class="fas fa-fw fa-pencil-alt"></i></a>
-                    </li>
-
-                    <li>
-                        <!-- Coordinates/Address Button -->
-                        <a class="clickable" data-toggle="modal" data-target="#geolocationModal"
-                            title="Search Address & Coords."><i class="fas fa-fw fa-map-marker-alt"></i></a>
-                    </li>
-
-                    <li>
-                        <!-- Search Button -->
-                        <a class="clickable" data-toggle="modal" data-target="#searchModal"
-                            title="Search Address & Coords."><i class="fas fa-binoculars"></i></a>
                     </li>
 
                     <li>
@@ -239,7 +236,7 @@
                     <li>
                         <!--Upload data button-->
                         <a class="clickable" , data-toggle="modal" data-target="#UploadModal"
-                        title="Upload geojson file"><i class="fas fa-upload"></i></a>
+                            title="Upload geojson file"><i class="fas fa-upload"></i></a>
                     </li>
 
                     <li>
@@ -296,6 +293,125 @@
                     <div class="modal-body">
 
                         <div id="menu"></div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- My Layers Modal -->
+        <!-- My Layers Modal -->
+        <!-- My Layers Modal -->
+        <div class="modal left fade" id="MylayersModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"><i class="fas fa-layer-group"></i>&nbsp;Toggle Layers
+                        </h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <p> Click the buttons below to remove your added layers.</p>
+
+                        <div id="markers" class="layer-item grb" initial-index="9">
+                            <input class="my-button" type="button" <span class="name">Markers</span>
+                        </div>
+
+                        <div id="Lines" class="layer-item grb" initial-index="9">
+                            <input class="my-button button2" type="button">
+                            <span class="name">Lines</span>
+                        </div>
+
+                        <div id="Points" class="layer-item grb" initial-index="9">
+                            <input class="my-button button3" type="button">
+                            <span class="name">Points</span>
+                        </div>
+
+                        <div id="GeoJ" class="layer-item grb" initial-index="9">
+                            <input class="my-button button5" type="button">
+                            <span class="name">GeoJson</span>
+                        </div>
+
+                        <div id="All" class="layer-item grb" initial-index="9">
+                            <input class="my-button button4" type="button">
+                            <span class="name">Remove all</span>
+                        </div>
+
+                        <script>
+                            // Delete all lines and clear the linename list
+                            $("#Lines").click(function (event) {
+                                removeLines();
+                            })
+
+                            $("#markers").click(function (event) {
+                                removeMarkers();
+                            })
+
+                            $("#Points").click(function (event) {
+                                removePoints();
+                            })
+
+                            $("#GeoJ").click(function (event) {
+                                removegeojson();
+                            })
+
+
+                            $("#All").click(function (event) {
+                                removeLines();
+                                removeMarkers();
+                                removePoints();
+                                removegeojson();
+                            });
+
+                            function removeMarkers() {
+                                if (currentMarkers != null) {
+                                    for (var i = currentMarkers.length - 1; i >= 0; i--) {
+                                        currentMarkers[i].remove();
+                                        points = [];
+
+                                    }
+                                }
+                            }
+
+                            function removePoints() {
+                                if (pointsNames.length > 0) {
+                                    for (i = pointsNames.length - 1; i >= 0; i--) {
+                                        map.removeLayer(pointsNames[i])
+                                        map.removeSource(pointsNames[i])
+                                    }
+
+                                    pointsNames = []
+
+                                }
+                            }
+
+                            function removeLines() {
+                                if (linenames.length > 0) {
+
+                                    for (i = linenames.length - 1; i >= 0; i--) {
+                                        map.removeLayer(linenames[i]);
+                                        map.removeSource(linenames[i]);
+                                    }
+
+
+                                    linenames = [];
+                                }
+                            }
+
+                            function removegeojson() {
+                                if (geojdata.length > 0)
+                                {
+                                    map.removeLayer('textdata1');
+                                    map.removeSource('textdata1');
+                                }
+                            }
+                        </script>
 
                     </div>
 
@@ -492,22 +608,22 @@
                         </div>
 
                         <script>
-                            $("#save_info").click(function event(){
+                            $("#save_info").click(function event() {
 
-                                var dict = {coordinates: "data"}
+                                var dict = { coordinates: "data" }
 
                                 dict[coordinates] = $("#geocoords").html();
 
                                 $.ajax({
                                     type: "POST",
-                                    url: "http://127.0.0.1:8080/geodata", 
+                                    url: "http://127.0.0.1:8080/geodata",
                                     data: JSON.stringify(dict),
                                     crossDomain: true,
                                     contentType: "application/json"
                                 })
                             });
 
-                            $("#delete_info").click(function event(){
+                            $("#delete_info").click(function event() {
                                 $("#geocoords").val("");
 
                             })
@@ -534,24 +650,27 @@
                     </div>
 
                     <div class="modal-body">
-                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br />Step 1. Paste some geojson
-                        data into the textbox below. Press search to show it on the map.</p>
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br />Step 1. Paste some
+                            geojson
+                            data into the textbox below. Press search to show it on the map.</p>
 
                         <div style="display: inline-flex;" id="target_layer">
                             <textarea id="geojsondata"></textarea>
-                            <button class="clickable" type="submit" id="uploadData"><i class="fas fa-search"></i></button>
+                            <button class="clickable" type="submit" id="uploadData"><i
+                                    class="fas fa-search"></i></button>
                             <button class="clickable" type="submit" id="deleteData"><i
                                     class="fas fa-trash"></i></button>
                         </div>
 
                         <script>
-                            $("#uploadData").click(function (event){
+                            $("#uploadData").click(function (event) {
 
                                 let userdata = $("#geojsondata").val()
                                 console.log(userdata)
                                 userdata = JSON.parse(userdata)
 
                                 let name = 'textdata' + 1;
+                                geojdata.push(name);
 
                                 map.addSource(name, {
                                     type: 'geojson',
@@ -570,7 +689,7 @@
 
                             });
 
-                            $("#deleteData").click(function (event){
+                            $("#deleteData").click(function (event) {
                                 $("#geojsondata").val("")
                             })
 
@@ -654,8 +773,23 @@
                             <button class="clickable" type="submit" id="getdist"><i class="fa fa-road"></i></button>
                         </div>
 
+                        <div style="display: inline-flex">
+                            <i style="font-size:smaller; margin: 5px 4px 0px 4px;">
+                                <input type="radio" name="unit" id="miles" checked="checked">
+                                Miles
+                            <i/>
+
+                            <i style="font-size:smaller; margin: 5px 4px 0px 4px;">
+                                <input type="radio" name="unit" id="kiloms" checked="unchecked">
+                                km
+                            <i/>
+
+                        </div>       
+
 
                         <script>
+                            let inmiles = false;
+                            let inkms = false;
 
                             $("#city-select").hide();
                             $("#city-select2").hide();
@@ -688,6 +822,7 @@
                                     var lat = coords[1]
 
                                     var enterLL = turf.point([lon, lat]);
+                                    pointsNames.push('enterLL');
 
                                     // Adds the city to the map
                                     map.addSource('enterLL', {
@@ -733,6 +868,7 @@
                                     var lat = coords[1]
 
                                     var enterLL2 = turf.point([lon, lat]);
+                                    pointsNames.push('enterLL2');
 
                                     // Adds the city to the map
                                     map.addSource('enterLL2', {
@@ -874,6 +1010,13 @@
                                     [lon2, lat2]
                                 ];
 
+                                let midlon = ((lon + lon2)/2)
+                                let midlat = ((lat + lat2)/2)
+
+                                map.flyTo({
+                                        center: [midlon, midlat]
+                                    });
+
                                 var linestring = turf.lineString(positions);
 
                                 map.addLayer({
@@ -891,7 +1034,10 @@
                                         'line-color': '#FF0',
                                         'line-width': 6
                                     }
+
+
                                 });
+                                linenames.push('distance');
 
                                 // Do haversine while we're here.
                                 var PI = Math.PI;
@@ -914,8 +1060,38 @@
                                 let Hvalue = haversine.toString() + "mi";
 
                                 $("#distance").val(Hvalue);
+                                inmiles = true;
 
                             });
+
+                            $("#miles").click(function (event){
+                                if(inkms)
+                                {
+                                    let miledistance = parseFloat($("#distance").val());
+                                    miledistance *= 0.621371;
+
+                                    $("#distance").val(miledistance + " miles")
+
+                                    inmiles = true;
+                                    inkms = false;
+                                }
+
+                            })
+
+                            $("#kiloms").click(function (event){
+                                if(inmiles)
+                                {
+                                    let kilodistance = parseFloat($("#distance").val());
+                                    kilodistance /= 0.621371;
+
+                                    $("#distance").val(kilodistance + " km");
+
+                                    inkms = true;
+                                    inmiles = false;
+
+                                }
+
+                            })
 
                         </script>
 
@@ -941,20 +1117,23 @@
 
                     <div class="modal-body">
 
-                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Click on the map to select 
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Click on the map
+                            to select
                             a pair of coordiantes.</p>
                         <br />
 
-                        <pre id="clickedCoords" ></pre>
+                        <pre id="clickedCoords"></pre>
                         <br />
-                        
-                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Select the number of volcanos 
+
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> Select the number
+                            of volcanos
                             you wish to find.</p>
 
                         <input type="search" id="neighbornum" />
                         <br />
 
-                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> When the above data is correct,
+                        <p style="margin-bottom: -1px; padding: 0px 0px 5px 0px; width: 100%;"><br /> When the above
+                            data is correct,
                             press the button below.</p>
 
                         <button class="clickable" type="submit" id="findNeighbors"><i class="fa fa-search"></i></button>
@@ -975,16 +1154,17 @@
                                 let number = $("#neighbornum").val()
                                 console.log(number)
 
-                                $.get("http://localhost:8080/neighbors?lon=" + lon + "&lat=" + lat + "&num=" + number, function(data){
+                                $.get("http://localhost:8080/neighbors?lon=" + lon + "&lat=" + lat + "&num=" + number, function (data) {
                                     let features = data['results'][0]['features'];
 
-                                    for(i=0;i<number;i++)
-                                    {
+                                    for (i = 0; i < number; i++) {
                                         let coords = (features[i].geometry.coordinates)
 
-                                        var marker = new mapboxgl.Marker({'color':"#FFFF00"})
-                                        .setLngLat(coords)
-                                        .addTo(map);
+                                        var marker = new mapboxgl.Marker({ 'color': "#FFFF00" })
+                                            .setLngLat(coords)
+                                            .addTo(map);
+
+                                        currentMarkers.push(marker);
                                     }
                                 })
                             });
@@ -1042,6 +1222,7 @@
                             $("#Draw-shape").click(function (event) {
 
                                 map.on('click', function (e) {
+                                    done = false;
                                     if (done == false) {
                                         let coords = e.lngLat;
 
@@ -1052,6 +1233,8 @@
                                         var marker = new mapboxgl.Marker()
                                             .setLngLat(coords)
                                             .addTo(map);
+
+                                        currentMarkers.push(marker);
 
                                     }
                                 });
@@ -1071,65 +1254,66 @@
                                 for (i = 0; i < points.length - 1; i++) {
                                     let lng1 = points[i].lng;
                                     let lat1 = points[i].lat;
-                                    let lng2 = points[i+1].lng;
-                                    let lat2 = points[i+1].lat;
-                                    let positions = [[lng1, lat1],[lng2, lat2]];
+                                    let lng2 = points[i + 1].lng;
+                                    let lat2 = points[i + 1].lat;
+                                    let positions = [[lng1, lat1], [lng2, lat2]];
 
                                     console.log(positions);
-                                    
+
                                     var linestring = turf.lineString(positions);
 
                                     name = "path" + i;
-
-                                        map.addLayer({
-                                            'id': name,
-                                            'type': 'line',
-                                            'source': {
-                                                'type': "geojson",
-                                                "data": linestring
-                                            },
-                                            'layout': {
-                                                'line-join': 'round',
-                                                'line-cap': 'round'
-                                            },
-                                            'paint': {
-                                                'line-color': '#FF0',
-                                                'line-width': 6
-                                            }
-                                        });
+                                    linenames.push(name);
+                                    map.addLayer({
+                                        'id': name,
+                                        'type': 'line',
+                                        'source': {
+                                            'type': "geojson",
+                                            "data": linestring
+                                        },
+                                        'layout': {
+                                            'line-join': 'round',
+                                            'line-cap': 'round'
+                                        },
+                                        'paint': {
+                                            'line-color': '#FF0',
+                                            'line-width': 6
+                                        }
+                                    });
                                 };
 
                                 // Make the last line
                                 let last = points.length - 1;
 
-                                    let lng1 = points[last].lng;
-                                    let lat1 = points[last].lat;
-                                    let lng2 = points[0].lng;
-                                    let lat2 = points[0].lat;
-                                    let positions = [[lng1, lat1],[lng2, lat2]];
+                                let lng1 = points[last].lng;
+                                let lat1 = points[last].lat;
+                                let lng2 = points[0].lng;
+                                let lat2 = points[0].lat;
+                                let positions = [[lng1, lat1], [lng2, lat2]];
 
-                                    console.log(positions);
-                                    
-                                    var linestring = turf.lineString(positions);
+                                console.log(positions);
 
-                                    name = "lastpath";
+                                var linestring = turf.lineString(positions);
 
-                                    map.addLayer({
-                                            'id': name,
-                                            'type': 'line',
-                                            'source': {
-                                                'type': "geojson",
-                                                "data": linestring
-                                            },
-                                            'layout': {
-                                                'line-join': 'round',
-                                                'line-cap': 'round'
-                                            },
-                                            'paint': {
-                                                'line-color': '#FF0',
-                                                'line-width': 6
-                                            }
-                                        });
+
+                                name = "lastpath";
+                                linenames.push(name);
+                                map.addLayer({
+                                    'id': name,
+                                    'type': 'line',
+                                    'source': {
+                                        'type': "geojson",
+                                        "data": linestring
+                                    },
+                                    'layout': {
+                                        'line-join': 'round',
+                                        'line-cap': 'round'
+                                    },
+                                    'paint': {
+                                        'line-color': '#FF0',
+                                        'line-width': 6
+                                    }
+                                });
                             });
 
                             $("#ShowPoints").click(function (event) {
@@ -1138,15 +1322,12 @@
                                 // Get the max lats and lons
                                 let lonmax = points[0].lng;
                                 let latmax = points[0].lng;
-                                for(i=1; i<points.length; i++)
-                                {
-                                    if(points[i].lng > lonmax)
-                                    {
+                                for (i = 1; i < points.length; i++) {
+                                    if (points[i].lng > lonmax) {
                                         lonmax = points[i].lng
                                     }
 
-                                    if(points[i].lat > latmax)
-                                    {
+                                    if (points[i].lat > latmax) {
                                         latmax = points[i].lat
                                     }
                                 }
@@ -1154,15 +1335,12 @@
                                 // Get the min lats and lons
                                 let lonmin = points[0].lng;
                                 let latmin = points[0].lat;
-                                for(i=1; i<points.length; i++)
-                                {
-                                    if(points[i].lng < lonmin)
-                                    {
+                                for (i = 1; i < points.length; i++) {
+                                    if (points[i].lng < lonmin) {
                                         lonmin = points[i].lng;
                                     }
-                                    
-                                    if(points[i].lat < latmin)
-                                    {
+
+                                    if (points[i].lat < latmin) {
                                         latmin = points[i].lat;
                                     }
                                 }
@@ -1172,22 +1350,22 @@
                                 console.log(latmin)
                                 console.log(latmax)
 
-                                $.get("http://localhost:8080/cities", function (data){
+                                $.get("http://localhost:8080/cities", function (data) {
                                     cities = data["results"][0]['features']
 
                                     // Loop through every city
-                                    for(i=0; i<cities.length; i++)
-                                    {
-                                        
+                                    for (i = 0; i < cities.length; i++) {
+
                                         citylon = parseFloat((cities[i].geometry.coordinates[0]))
                                         citylat = parseFloat((cities[i].geometry.coordinates[1]))
                                         console.log(citylon)
-                                        if((citylon > lonmin && citylon < lonmax) && (citylat > latmin && citylat < latmax))
-                                        {
+                                        if ((citylon > lonmin && citylon < lonmax) && (citylat > latmin && citylat < latmax)) {
                                             coords = [citylon, citylat]
-                                            var marker = new mapboxgl.Marker({"color": "#FF4500"})
-                                            .setLngLat(coords)
-                                            .addTo(map);  
+                                            var marker = new mapboxgl.Marker({ "color": "#FF4500" })
+                                                .setLngLat(coords)
+                                                .addTo(map);
+
+                                            currentMarkers.push(marker);
                                         }
                                     }
 
